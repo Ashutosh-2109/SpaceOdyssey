@@ -1,8 +1,8 @@
-import { fetchSnapshot, stepSimulation } from "./api/client.js";
-import { GroundTrackRenderer } from "./renderer/groundtrack.js";
-import { BullseyeRenderer } from "./renderer/bullseye.js";
-import { HeatmapRenderer } from "./renderer/heatmap.js";
-import { GanttRenderer } from "./renderer/gantt.js";
+import { fetchSnapshot, stepSimulation } from "./api/client.js?v=3";
+import { GroundTrackRenderer } from "./renderer/groundtrack.js?v=3";
+import { BullseyeRenderer } from "./renderer/bullseye.js?v=3";
+import { HeatmapRenderer } from "./renderer/heatmap.js?v=3";
+import { GanttRenderer } from "./renderer/gantt.js?v=3";
 
 const mapRenderer = new GroundTrackRenderer(document.getElementById("map-canvas"));
 const bullseyeRenderer = new BullseyeRenderer(document.getElementById("bullseye"));
@@ -18,6 +18,12 @@ let dirty = false;
 let autoPlay = true;
 let stepSeconds = 120;
 let stepping = false;
+
+window.selectSatellite = (id) => {
+  selectedSatelliteId = id;
+  mapRenderer.selectedId = id;
+  dirty = true;
+};
 
 function riskSummary(snapshot) {
   const red = snapshot.active_conjunctions.filter((item) => item.risk === "RED").length;
@@ -53,22 +59,25 @@ function renderEventFeed(snapshot) {
       title: `${item.risk} conjunction corridor`,
       body: `${item.sat_id} could intersect ${item.deb_id} in ${(item.tca_seconds / 60).toFixed(1)} minutes. Miss distance ${item.miss_distance_km.toFixed(3)} km.`,
       color: colorForRisk(item.risk),
+      satId: item.sat_id,
     })),
     ...snapshot.recent_maneuvers.slice(0, 6).map((item) => ({
       title: `${item.maneuver_type} burn executed`,
       body: `${item.satellite_id} ${item.event} burn ${item.burn_id} with delta-v ${Number(item.delta_v_mps || 0).toFixed(2)} m/s.`,
       color: item.maneuver_type === "EVASION" ? "#ffbe55" : "#60c4ff",
+      satId: item.satellite_id,
     })),
     ...snapshot.recent_collisions.slice(0, 3).map((item) => ({
       title: `Collision event`,
       body: `${item.satellite_id} intersected ${item.debris_id} at miss distance ${item.miss_distance_km.toFixed(4)} km.`,
       color: "#ff5f72",
+      satId: item.satellite_id,
     })),
   ];
   feed.innerHTML = eventCards
     .map(
       (item) => `
-      <div class="feed-card" style="border-color:${item.color}40;">
+      <div class="feed-card" style="cursor: pointer; border-color:${item.color}40;" onclick="window.selectSatellite('${item.satId}')">
         <div style="display:flex;justify-content:space-between;gap:10px;">
           <strong style="color:${item.color};">${item.title}</strong>
         </div>
@@ -97,7 +106,7 @@ function renderDetails(snapshot) {
       <div>Recent Collisions</div><div>${snapshot.recent_collisions.length}</div>
     `;
     alerts.innerHTML = snapshot.active_conjunctions.slice(0, 3).map((item) => `
-      <div class="alert-chip" style="background:${colorForRisk(item.risk)}15;color:${colorForRisk(item.risk)};">
+      <div class="alert-chip" style="cursor: pointer; background:${colorForRisk(item.risk)}15;color:${colorForRisk(item.risk)};" onclick="window.selectSatellite('${item.sat_id}')">
         ${item.sat_id} threat corridor to ${item.deb_id} in ${(item.tca_seconds / 60).toFixed(1)}m
       </div>
     `).join("");
@@ -119,12 +128,12 @@ function renderDetails(snapshot) {
   `;
   alerts.innerHTML = [
     ...satCdms.map((item) => `
-      <div class="alert-chip" style="background:${colorForRisk(item.risk)}15;color:${colorForRisk(item.risk)};">
-        ${item.risk} miss ${item.miss_distance_km.toFixed(3)} km at ${(item.tca_seconds / 60).toFixed(1)} min
+      <div class="alert-chip" style="cursor: pointer; background:${colorForRisk(item.risk)}15;color:${colorForRisk(item.risk)};" onclick="window.selectSatellite(null)">
+        ${item.risk} miss ${item.miss_distance_km.toFixed(3)} km at ${(item.tca_seconds / 60).toFixed(1)} min (Click to unselect)
       </div>
     `),
     ...satManeuvers.slice(0, 3).map((item) => `
-      <div class="alert-chip" style="background:${item.maneuver_type === "EVASION" ? "#ffbe5515" : "#60c4ff15"};color:${item.maneuver_type === "EVASION" ? "#ffbe55" : "#60c4ff"};">
+      <div class="alert-chip" style="cursor: pointer; background:${item.maneuver_type === "EVASION" ? "#ffbe5515" : "#60c4ff15"};color:${item.maneuver_type === "EVASION" ? "#ffbe55" : "#60c4ff"};" onclick="window.selectSatellite(null)">
         ${item.maneuver_type} ${item.event} burn ${item.burn_id}
       </div>
     `),

@@ -98,6 +98,8 @@ export class GroundTrackRenderer {
         const marker = new PIXI.Container();
         marker.eventMode = "static";
         marker.cursor = "pointer";
+        // Provide a large explicit hitArea. The actual core radius is 4px, which is extremely difficult to click precisely with a mouse.
+        marker.hitArea = new PIXI.Circle(0, 0, 28);
         const glow = new PIXI.Graphics();
         const core = new PIXI.Graphics();
         marker.addChild(glow, core);
