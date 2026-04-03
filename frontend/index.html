@@ -165,17 +165,6 @@
           radial-gradient(circle at center, rgba(96,196,255,0.08), transparent 58%),
           linear-gradient(180deg, rgba(5, 17, 28, 0.85), rgba(5, 13, 24, 0.96));
       }
-      #detail-panel {
-        position: absolute;
-        right: 18px;
-        top: 86px;
-        width: 320px;
-        background: rgba(4, 16, 27, 0.8);
-        border: 1px solid rgba(96, 196, 255, 0.16);
-        border-radius: 22px;
-        padding: 16px;
-        box-shadow: 0 0 40px rgba(0,0,0,0.25);
-      }
       .detail-grid {
         margin-top: 12px;
         display: grid;
@@ -184,36 +173,24 @@
         color: var(--muted);
       }
       #map-legend {
-        position: absolute;
-        left: 18px;
-        bottom: 18px;
-        background: rgba(4, 16, 27, 0.95);
-        border: 1px solid rgba(96, 196, 255, 0.25);
-        border-radius: 18px;
-        padding: 14px 18px;
-        box-shadow: 0 0 40px rgba(0,0,0,0.5);
+        background: rgba(5, 13, 24, 0.96);
+        border-top: 1px solid rgba(96, 196, 255, 0.16);
+        padding: 12px 18px;
         display: flex;
-        flex-direction: column;
-        gap: 12px;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 24px;
         pointer-events: none;
-        z-index: 999;
-        backdrop-filter: blur(8px);
-        -webkit-backdrop-filter: blur(8px);
-        transform: translateZ(10px);
       }
       .legend-title {
-        font-family: "Space Grotesk", sans-serif;
-        font-size: 0.85rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        color: var(--muted);
-        letter-spacing: 0.08em;
-        margin-bottom: 4px;
+        display: none;
       }
       .legend-item {
         display: flex;
         align-items: center;
-        gap: 12px;
+        gap: 8px;
       }
       .legend-icon-box {
         width: 32px;
@@ -271,8 +248,10 @@
         background: linear-gradient(180deg, transparent, rgba(255,255,255,0.4), transparent);
       }
       .legend-text {
-        font-family: "IBM Plex Mono", monospace;
-        font-size: 0.78rem;
+        font-family: "Space Grotesk", sans-serif;
+        font-size: 0.82rem;
+        font-weight: 500;
+        letter-spacing: 0.02em;
         color: var(--text);
       }
       .detail-alerts {
@@ -436,12 +415,6 @@
                 <div class="legend-text">Day/Night Terminator</div>
               </div>
             </div>
-            <aside id="detail-panel">
-              <strong id="detail-title">Fleet Overview</strong>
-              <p class="tiny" id="detail-subtitle">Select a satellite to inspect conjunctions, burns, and deviation vectors.</p>
-              <div class="detail-grid" id="detail-grid"></div>
-              <div class="detail-alerts" id="detail-alerts"></div>
-            </aside>
           </section>
           <section class="panel">
             <div class="panel-header">
@@ -453,6 +426,16 @@
         </div>
 
         <div class="stack">
+          <section class="panel" id="detail-panel">
+            <div class="panel-header">
+              <h2 id="detail-title">Fleet Overview</h2>
+              <span class="tiny" id="detail-subtitle">Select a satellite to inspect conjunctions, burns, and deviation vectors.</span>
+            </div>
+            <div style="padding: 4px 18px 18px;">
+              <div class="detail-grid" id="detail-grid"></div>
+              <div class="detail-alerts" id="detail-alerts"></div>
+            </div>
+          </section>
           <section class="panel">
             <div class="panel-header">
               <h2>Conjunction Bullseye</h2>
