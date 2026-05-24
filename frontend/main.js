@@ -3,7 +3,7 @@ import { GroundTrackRenderer } from "./renderer/groundtrack.js?v=3";
 import { BullseyeRenderer } from "./renderer/bullseye.js?v=3";
 import { HeatmapRenderer } from "./renderer/heatmap.js?v=3";
 import { GanttRenderer } from "./renderer/gantt.js?v=3";
-
+import { Orbital3DRenderer } from "./renderer/orbital3d.js?v=3";
 const mapRenderer = new GroundTrackRenderer(document.getElementById("map-canvas"));
 const bullseyeRenderer = new BullseyeRenderer(document.getElementById("bullseye"));
 const heatmapRenderer = new HeatmapRenderer(
@@ -11,6 +11,7 @@ const heatmapRenderer = new HeatmapRenderer(
   document.getElementById("efficiency-chart")
 );
 const ganttRenderer = new GanttRenderer(document.getElementById("gantt"));
+const orbital3DRenderer = new Orbital3DRenderer(document.getElementById("orbital3d-canvas"));
 
 let snapshotState = null;
 let selectedSatelliteId = null;
@@ -152,6 +153,7 @@ function updateHud(snapshot) {
 
 function render(snapshot) {
   mapRenderer.update(snapshot);
+  orbital3DRenderer.update(snapshot);
   bullseyeRenderer.render(snapshot.active_conjunctions, selectedSatelliteId);
   heatmapRenderer.render(snapshot);
   ganttRenderer.render(snapshot);
@@ -217,6 +219,29 @@ function wireControls() {
       stepSeconds = Number(chip.dataset.speed);
       dirty = true;
     });
+  });
+
+  const view2dBtn = document.getElementById("view-2d-btn");
+  const view3dBtn = document.getElementById("view-3d-btn");
+  const canvas2d = document.getElementById("map-canvas");
+  const canvas3d = document.getElementById("orbital3d-canvas");
+  const legend = document.getElementById("map-legend");
+
+  view2dBtn.addEventListener("click", () => {
+    view2dBtn.classList.add("active");
+    view3dBtn.classList.remove("active");
+    canvas2d.style.display = "block";
+    legend.style.display = "flex";
+    canvas3d.style.display = "none";
+  });
+
+  view3dBtn.addEventListener("click", () => {
+    view3dBtn.classList.add("active");
+    view2dBtn.classList.remove("active");
+    canvas2d.style.display = "none";
+    legend.style.display = "none";
+    canvas3d.style.display = "block";
+    orbital3DRenderer.handleResize();
   });
 }
 

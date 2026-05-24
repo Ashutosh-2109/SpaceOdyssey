@@ -12,6 +12,13 @@
     />
     <script src="https://cdn.jsdelivr.net/npm/pixi.js@7.x/dist/pixi.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.128.0/build/three.module.js"
+        }
+      }
+    </script>
     <style>
       :root {
         --bg: #02060d;
@@ -387,10 +394,17 @@
         <div class="stack">
           <section class="panel" id="map-panel">
             <div class="panel-header">
-              <h2>Threat Map</h2>
-              <span class="tiny">Predicted intercepts, evasions, and recovery arcs</span>
+              <div>
+                <h2>Threat Map</h2>
+                <span class="tiny">Predicted intercepts, evasions, and recovery arcs</span>
+              </div>
+              <div style="display:flex; gap: 8px;">
+                <button id="view-2d-btn" class="control-chip active" style="font-size:0.75rem; padding: 6px 12px;">2D RADAR</button>
+                <button id="view-3d-btn" class="control-chip" style="font-size:0.75rem; padding: 6px 12px;">3D ORBIT</button>
+              </div>
             </div>
             <div id="map-canvas"></div>
+            <div id="orbital3d-canvas" style="display: none; width: 100%; height: calc(62vh - 58px); border-radius: 0 0 24px 24px;"></div>
             <div id="map-legend">
               <div class="legend-title">Legend</div>
               <div class="legend-item">
